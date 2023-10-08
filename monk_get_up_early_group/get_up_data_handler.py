@@ -149,7 +149,7 @@ def parse_first_integer(message_str) -> (int, int, int):
 
 
 def get_pretty_json_dict(data: dict[str, GetUpData]) -> str:
-    return json.dumps(data, indent=4, default=GetUpData.custom_serializer)
+    return json.dumps(data, indent=4, ensure_ascii=False, default=GetUpData.custom_serializer)
 
 
 def pretty_json_print_dict(data) -> None:
