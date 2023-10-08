@@ -1,5 +1,6 @@
 import logging
 import json
+import re
 from datetime import time
 from datetime import datetime
 from datetime import date
@@ -82,6 +83,12 @@ Util Classes
 def parse_message_content_without_format(message_content):
     res_dict = {}
     msg_content = message_content
+
+    # If msg_content include `<title>` tag, only remind the contents inside the `<title></title>`
+    match = re.search(r'<title>(.*?)<\\/title>', msg_content, re.IGNORECASE)
+    if match:
+        msg_content = match.group(1)
+
     index = 1
     index_label = '\n1. '
     # Clean up message head
@@ -148,12 +155,12 @@ def parse_first_integer(message_str) -> (int, int, int):
     return start_pos, end_pos, first_num
 
 
-def get_pretty_json_dict(data: dict[str, GetUpData]) -> str:
+def get_pretty_json_get_up_data(data: dict[str, GetUpData]) -> str:
     return json.dumps(data, indent=4, ensure_ascii=False, default=GetUpData.custom_serializer)
 
 
-def pretty_json_print_dict(data) -> None:
-    print(get_pretty_json_dict(data))
+def pretty_json_print_get_up_data(data) -> None:
+    print(get_pretty_json_get_up_data(data))
 
 
 """
@@ -211,14 +218,14 @@ class ChainMessageReminderService(object):
             get_up_time_msg,
         )
 
-    def get_parsed_content_dict(self) -> dict[str, GetUpData]:
+    def get_parsed_content_dict(self) -> (dict[str, GetUpData], set):
         self._get_up_content_dict, format_error_users = self._parse_get_up_time_and_log()
 
         format_error_reminder_copywrite = self._build_format_error_reminder_copywrite(format_error_users)
         if format_error_reminder_copywrite:
             logger.error(format_error_reminder_copywrite)
 
-        return self._get_up_content_dict
+        return self._get_up_content_dict, format_error_users
 
     def _parse_get_up_time_and_log(self) -> (dict[str, GetUpData], set):
         get_up_content_dict = {}
