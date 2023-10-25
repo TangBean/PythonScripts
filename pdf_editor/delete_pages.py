@@ -1,6 +1,6 @@
 from PyPDF2 import PdfReader, PdfWriter
 
-ori = 'C:\\Users\\Tang_\\Downloads\\123.pdf'
+ori = 'C:\\Users\\Tang_\\Downloads\\Barry 职场英语 实战对话 (raw).pdf'
 out = 'C:\\Users\\Tang_\\Downloads\\Barry 职场英语 实战对话.pdf'
 
 with open(ori, 'rb') as input_pdf:
@@ -8,7 +8,7 @@ with open(ori, 'rb') as input_pdf:
     pdfWriter = PdfWriter()
 
     numPages = len(pdfReader.pages)
-    remove = (0, 1, 12, 48, 72, 116, 118, 156, 182, 184, 192)
+    remove = (0,1,2,3,13,49,73,117,119,157,183,185,193)
 
     for index in range(numPages):
         if index not in remove:
