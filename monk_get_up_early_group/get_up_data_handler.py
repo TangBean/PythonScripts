@@ -97,28 +97,35 @@ def parse_message_content_without_format(message_content):
         return res_dict
     msg_content = msg_content[pos:]
 
-    # Parse message
+    # 循环解析消息内容
     while True:
+        # 移除当前索引标签
         msg_content = msg_content[len(index_label):]
-        index = index + 1
+        index += 1
         index_label = f'\n{index}. '
         pos = msg_content.find(index_label)
-        if pos == -1:
-            single_record = msg_content
-        else:
-            single_record = msg_content[:pos]
-            msg_content = msg_content[pos:]
 
+        # 提取单个记录
+        single_record = msg_content if pos == -1 else msg_content[:pos]
+        msg_content = msg_content[pos:]
+
+        # 提取键和值
         space_pos = single_record.find(' ')
         if space_pos == -1:
-            continue
+            # 如果没有更多索引标签，退出循环
+            if pos == -1:
+                break
+            continue  # 如果找不到空格，跳过当前记录
         key = single_record[:space_pos]
         val = single_record[space_pos + 1:]
+
+        # 将键和值添加到结果字典中
         if key in res_dict:
             res_dict[key] += '\n' + val
         else:
             res_dict[key] = val
 
+        # 如果没有更多索引标签，退出循环
         if pos == -1:
             break
 
